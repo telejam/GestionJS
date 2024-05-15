@@ -3,6 +3,13 @@ import { Product } from 'src/interfaces/product/product.interface';
 
 @Injectable()
 export class ProductsService {
+    private readonly products: Product[] = []
+
+    getProducts(): Product[] {
+        //GetAll
+
+        return this.products;
+    }
 
     createProduct(product: Product): string {
         //Add
