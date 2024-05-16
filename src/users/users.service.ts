@@ -1,21 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/interfaces/user/user.interface';
-import { CreateUserDto } from 'src/models/users/create-user.dto';
+import { UserDto } from 'src/models/users/user.dto';
 
 @Injectable()
 export class UsersService {
     private readonly users: User[] = [];
-
-    // TODO delete
-    constructor() {
-        this.users.push(
-        {
-            id: '1',
-            username: 'admin',
-            password: 'admin',
-        });
-    }
-    //
 
     async getUser(username: string): Promise<User | undefined> {
         // TODO GetByUsername
@@ -24,7 +13,7 @@ export class UsersService {
         return this.users.find(user => user.username === username);
     }
 
-    createUser(createUserDto: CreateUserDto): string {
+    createUser(createUserDto: UserDto): string {
         // TODO Add
         console.log(createUserDto);
 
