@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Product } from 'src/interfaces/product/product.interface';
-import { CreateProductDto } from 'src/models/products/create-product.dto';
+import { ProductDto } from 'src/models/products/product.dto';
 
 @Injectable()
 export class ProductsService {
     private readonly products: Product[] = []
 
-    getProducts(): Product[] {
+    getProducts(name: string, quantity: number): Product[] | Product | undefined {
         // TODO GetAll
 
-        return this.products;
+        if (name)
+            return this.products.find(product => product.name === name);
+        else
+            return this.products;
     }
 
-    createProduct(createProductDto: CreateProductDto): string {
+    createProduct(productDto: ProductDto): string {
         // TODO Add
-        console.log(createProductDto);
+        console.log(productDto);
 
         return "Product added";
     }

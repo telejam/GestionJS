@@ -1,32 +1,28 @@
-import { Controller, Post, Put, Delete, Param, Get, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Put, Delete, Param, Get, Body, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from 'src/interfaces/product/product.interface';
-import { CreateProductDto } from 'src/models/products/create-product.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { ProductDto } from 'src/models/products/product.dto';
+import { ProductFilterDto } from 'src/models/products/product-filter.dto';
 
 @Controller('products')
 export class ProductsController {
     constructor(private productsService: ProductsService) {}
 
-    @UseGuards(AuthGuard)
     @Get()
-    getProducts(): Product[] {
-        return this.productsService.getProducts();
+    getProducts(@Query() filter: ProductFilterDto): Product[] | Product | undefined {
+        return this.productsService.getProducts(filter.name, filter.quantity);
     }
 
-    @UseGuards(AuthGuard)
     @Post()
-    createProduct(@Body() createProductDto: CreateProductDto): string {
-        return this.productsService.createProduct(createProductDto);
+    createProduct(@Body() productDto: ProductDto): string {
+        return this.productsService.createProduct(productDto);
     }
 
-    @UseGuards(AuthGuard)
     @Put(':id')
     updateProduct(@Param('id') productId: string, @Body() product: Product): string {
         return this.productsService.updateProduct(productId, product);
     }
 
-    @UseGuards(AuthGuard)
     @Delete(':id')
     deleteProduct(@Param('id') productId: string, @Body() product: Product): string {
         return this.productsService.deleteProduct(productId, product);
