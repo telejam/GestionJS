@@ -1,38 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from 'src/interfaces/product/product.interface';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ProductDto } from 'src/models/products/product.dto';
+import { Product } from './product.entity';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
     private readonly products: Product[] = []
 
-    getProducts(name: string, quantity: number): Product[] | Product | undefined {
-        // TODO GetAll
+    constructor(
+        @InjectRepository(Product)
+        private productRepository: Repository<Product>,
+    ) {}
 
-        if (name)
-            return this.products.find(product => product.name === name);
-        else
-            return this.products;
+    async getProducts(name: string | undefined, page: number, limit: number): Promise<{data: Product[]; total: number}> {
+        const [data, total] = await this.productRepository.findAndCount({ 
+            skip: (page - 1) * limit,
+            take: limit,
+            where: { name } 
+        });
+
+        return { data, total };
     }
 
-    createProduct(productDto: ProductDto): string {
-        // TODO Add
-        console.log(productDto);
-
-        return "Product added";
+    async createProduct(productDto: ProductDto): Promise<Product> {
+        const newProduct = this.productRepository.create(productDto);
+        return this.productRepository.save(newProduct);
     }
 
-    updateProduct(productId: string, product: Product): string {
-        // TODO Update
-        console.log(product);
-
-        return "Product updated";
+    async updateProduct(id: number, product: Product): Promise<Product | null> {
+        await this.productRepository.update(id, product);
+        return this.productRepository.findOne({ where: { id } });
     }
 
-    deleteProduct(productId: string, product: Product): string {
-        // TODO Delete
-        console.log(product);
-
-        return "Product deleted";
+    async deleteProduct(id: number): Promise<DeleteResult> {
+        return await this.productRepository.delete(id);
     }
 }

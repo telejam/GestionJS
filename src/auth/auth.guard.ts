@@ -5,6 +5,7 @@ import {
 	SetMetadata,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -14,6 +15,7 @@ export class AuthGuard implements CanActivate {
 	constructor(
 		private jwtService: JwtService,
 		private reflector: Reflector,
+		private configService: ConfigService,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -34,7 +36,7 @@ export class AuthGuard implements CanActivate {
 			const payload = await this.jwtService.verifyAsync(
 				token,
 				{
-					secret: '123456789', //TODO .env
+					secret: this.configService.get<string>('SECRET'),
 				}
 			);
 			request['user'] = payload;
